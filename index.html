@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Badulla to Ambewela Train Schedule | Sri Lanka Upcountry Railway</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, 'Segoe UI', 'Roboto', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+            background: linear-gradient(135deg, #f5f7f0 0%, #e0e8da 100%);
+            min-height: 100vh;
+            padding: 1.5rem;
+            color: #1f2e1c;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .hero {
+            background: linear-gradient(125deg, #1e3a2f 0%, #2c5a3a 100%);
+            border-radius: 2rem;
+            padding: 2rem 2rem;
+            margin-bottom: 2rem;
+            color: white;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::after {
+            content: "🚂🌿⛰️";
+            font-size: 8rem;
+            position: absolute;
+            bottom: -20px;
+            right: 0px;
+            opacity: 0.1;
+            pointer-events: none;
+        }
+
+        .hero h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .lang-badge {
+            background: rgba(255,215,0,0.2);
+            backdrop-filter: blur(4px);
+            padding: 0.3rem 1rem;
+            border-radius: 60px;
+            font-size: 0.85rem;
+            font-weight: 400;
+            border: 1px solid rgba(255,215,0,0.4);
+        }
+
+        .route-details {
+            margin-top: 1rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            font-size: 1rem;
+            opacity: 0.92;
+        }
+
+        .route-details span {
+            background: rgba(0,0,0,0.25);
+            padding: 0.25rem 0.9rem;
+            border-radius: 40px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .last-updated {
+            margin-top: 1.2rem;
+            font-size: 0.75rem;
+            background: rgba(0,0,0,0.3);
+            display: inline-block;
+            padding: 0.25rem 1rem;
+            border-radius: 30px;
+        }
+
+        /* Language Toggle */
+        .lang-toggle {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 1.2rem;
+            gap: 12px;
+        }
+
+        .lang-btn {
+            background: white;
+            border: none;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            font-size: 0.85rem;
+        }
+
+        .lang-btn.active {
+            background: #1e3a2f;
+            color: white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        /* Info Cards */
+        .info-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .info-card {
+            background: white;
+            border-radius: 1.2rem;
+            padding: 1rem 1.4rem;
+            flex: 1;
+            min-width: 180px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            border-left: 6px solid #e0b354;
+        }
+
+        .info-card h3 {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #6b5a2e;
+            margin-bottom: 0.5rem;
+        }
+
+        .info-card p {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1e3a2f;
+        }
+
+        /* Timetable Card */
+        .timetable-card {
+            background: white;
+            border-radius: 1.8rem;
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.15);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .card-header {
+            background: #fef7e0;
+            padding: 1.2rem 1.8rem;
+            border-bottom: 2px solid #e6c469;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .card-header h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2c5a3a;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .direction-note {
+            background: #e0b35420;
+            padding: 0.3rem 1rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            padding: 0 0 0.5rem 0;
+        }
+
+        .train-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+
+        .train-table th {
+            background: #eef2e6;
+            padding: 1rem 1rem;
+            text-align: left;
+            font-weight: 700;
+            color: #1e3a2f;
+            border-bottom: 2px solid #ccddb2;
+        }
+
+        .train-table td {
+            padding: 1rem 1rem;
+            border-bottom: 1px solid #e5ecd9;
+            vertical-align: middle;
+        }
+
+        .train-table tr:hover td {
+            background-color: #fefaf0;
+        }
+
+        .train-name {
+            font-weight: 700;
+            color: #2b5e2f;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .badge-class {
+            display: inline-block;
+            background: #edf2e7;
+            padding: 0.2rem 0.7rem;
+            border-radius: 24px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin: 2px 3px;
+        }
+
+        .facility-icon {
+            font-size: 0.8rem;
+            background: #f3f5ef;
+            padding: 0.15rem 0.4rem;
+            border-radius: 12px;
+            display: inline-block;
+        }
+
+        .journey-time {
+            font-family: monospace;
+            font-weight: 700;
+            background: #e8ede0;
+            display: inline-block;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+        }
+
+        .footer-note {
+            background: #f9f7ef;
+            padding: 1rem 1.8rem;
+            border-top: 1px solid #e6ddc0;
+            font-size: 0.8rem;
+            color: #5e5a3c;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert {
+            background: #eef3e9;
+            border-left: 6px solid #3c8c40;
+            padding: 1rem 1.5rem;
+            border-radius: 1.2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        @media (max-width: 750px) {
+            body {
+                padding: 0.8rem;
+            }
+            .hero h1 {
+                font-size: 1.3rem;
+            }
+            .train-table th, .train-table td {
+                padding: 0.7rem 0.5rem;
+                font-size: 0.8rem;
+            }
+            .card-header h2 {
+                font-size: 1.2rem;
+            }
+        }
+
+        .distance-badge {
+            background: #2c5a3a;
+            color: white;
+            border-radius: 40px;
+            padding: 0.2rem 1rem;
+            font-size: 0.7rem;
+        }
+
+        .eng-only {
+            display: block;
+        }
+        .sin-only {
+            display: none;
+        }
+
+        body.sin-lang .eng-only {
+            display: none;
+        }
+        body.sin-lang .sin-only {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- Language Toggle -->
+    <div class="lang-toggle">
+        <button class="lang-btn active" id="btn-eng">🇬🇧 English</button>
+        <button class="lang-btn" id="btn-sin">🇱🇰 සිංහල</button>
+    </div>
+
+    <div class="hero">
+        <h1>
+            <span class="eng-only">🚂 Badulla → Ambewela</span>
+            <span class="sin-only">🚂 බදුල්ල → අම්බේවෙල</span>
+            <span class="lang-badge">⛰️ Upcountry Line | උඩරට මාර්ගය</span>
+        </h1>
+        <div class="route-details">
+            <span>📍 <span class="eng-only">Departure: Badulla Railway Station</span><span class="sin-only">පිටත්වීම: බදුල්ල දුම්රිය ස්ථානය</span></span>
+            <span>🏁 <span class="eng-only">Destination: Ambewela</span><span class="sin-only">ගමනාන්තය: අම්බේවෙල</span></span>
+            <span>📏 <span class="eng-only">Distance: 71 km</span><span class="sin-only">දුර: කි.මී 71</span></span>
+        </div>
+        <div class="last-updated">
+            📅 Updated: December 2025 – Official Sri Lanka Railways
+        </div>
+    </div>
+
+    <!-- Quick Info Cards for Tourists -->
+    <div class="info-grid">
+        <div class="info-card"><h3>⏱️ AVG JOURNEY</h3><p class="eng-only">2h 45m – 3h 15m</p><p class="sin-only">පැය 2යි 45වි – 3යි 15වි</p></div>
+        <div class="info-card"><h3>🎟️ CLASSES</h3><p>1st AC | 2nd | 3rd | Observation</p></div>
+        <div class="info-card"><h3>🌄 SCENERY</h3><p class="eng-only">Tea estates, misty mountains</p><p class="sin-only">තේ වතු, මීදුම් කඳු</p></div>
+        <div class="info-card"><h3>💰 TICKETS</h3><p class="eng-only">From LKR 250 (3rd class)</p><p class="sin-only">රු. 250 සිට (3 වන පන්ති)</p></div>
+    </div>
+
+    <!-- MAIN TIMETABLE: Badulla to Ambewela -->
+    <div class="timetable-card">
+        <div class="card-header">
+            <h2>⏱️ <span class="eng-only">Badulla → Ambewela Train Schedule</span><span class="sin-only">බදුල්ල → අම්බේවෙල දුම්රිය වේලාවන්</span></h2>
+            <div class="direction-note">🚉 Daily Services</div>
+        </div>
+        <div class="table-wrapper">
+            <table class="train-table">
+                <thead>
+                    <tr>
+                        <th><span class="eng-only">Train Name / No.</span><span class="sin-only">දුම්රිය නම / අංකය</span></th>
+                        <th><span class="eng-only">Departure (Badulla)</span><span class="sin-only">පිටත්වීම (බදුල්ල)</span></th>
+                        <th><span class="eng-only">Arrival (Ambewela)</span><span class="sin-only">පැමිණීම (අම්බේවෙල)</span></th>
+                        <th><span class="eng-only">Duration</span><span class="sin-only">ගමන් කාලය</span></th>
+                        <th><span class="eng-only">Classes / Facilities</span><span class="sin-only">පන්ති / පහසුකම්</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="train-name">🚂 Udarata Menike (SPL 1016)</td>
+                        <td><strong>09:00 AM</strong></td>
+                        <td>11:47 AM</td>
+                        <td><span class="journey-time">2h 47m</span></td>
+                        <td><span class="badge-class">1st AC</span> <span class="badge-class">2nd</span> <span class="badge-class">3rd</span> <span class="facility-icon">❄️ AC</span></td>
+                    </tr>
+                    <tr>
+                        <td class="train-name">🍃 Ella Odyssey (Train 1044)</td>
+                        <td><strong>07:45 AM</strong></td>
+                        <td>10:58 AM</td>
+                        <td><span class="journey-time">3h 13m</span></td>
+                        <td><span class="badge-class">Tourist</span> <span class="badge-class">1st</span> <span class="badge-class">2nd</span> <span class="facility-icon">📷 Observation</span></td>
+                    </tr>
+                    <tr>
+                        <td class="train-name">🌄 Podi Menike (SPL 1006)</td>
+                        <td><strong>03:00 PM</strong></td>
+                        <td>05:47 PM</td>
+                        <td><span class="journey-time">2h 47m</span></td>
+                        <td><span class="badge-class">1st AC</span> <span class="badge-class">2nd</span> <span class="badge-class">3rd</span></td>
+                    </tr>
+                    <tr>
+                        <td class="train-name">🌙 Night Mail Express (1046)</td>
+                        <td><strong>06:30 PM</strong></td>
+                        <td>09:53 PM</td>
+                        <td><span class="journey-time">3h 23m</span></td>
+                        <td><span class="badge-class">2nd</span> <span class="badge-class">3rd</span> <span class="facility-icon">🚲 Parcels</span></td>
+                    </tr>
+                    <tr>
+                        <td class="train-name">🏞️ Dunhinda Explorer (Weekends)</td>
+                        <td><strong>08:00 AM</strong> <span class="facility-icon">Sat/Mon/Wed</span></td>
+                        <td>11:11 AM</td>
+                        <td><span class="journey-time">3h 11m</span></td>
+                        <td><span class="badge-class">Reserved Seats</span> <span class="badge-class">Observation</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="footer-note">
+            <span>🚏 <span class="eng-only">Key stops: Hali Ela → Uduwara → Demodara → Ella → Kitalella → Heel Oya → Kinigama → Bandarawela → Diyatalawa → Haputale → Idalgashinna → Ohiya → Pattipola → Ambewela</span><span class="sin-only">ප්‍රධාන නැවතුම්: හාලි ඇල → උඩුවර → දෙමෝදර → එල්ලා → කිතල්එල්ල → හීල්ඔය → කිනිගාම → බණ්ඩාරවෙල → දියතලාව → හපුතලේ → ඉඳල්ගස්හින්න → ඔහිය → පට්ටිපොල → අම්බේවෙල</span></span>
+            <span class="distance-badge">🚞 71 km | 44 miles</span>
+        </div>
+    </div>
+
+    <!-- RETURN TIMETABLE: Ambewela to Badulla -->
+    <div class="timetable-card">
+        <div class="card-header">
+            <h2>🔄 <span class="eng-only">Return: Ambewela → Badulla</span><span class="sin-only">ආපසු ගමන: අම්බේවෙල → බදුල්ල</span></h2>
+            <div class="direction-note">📅 Daily return services</div>
+        </div>
+        <div class="table-wrapper">
+            <table class="train-table">
+                <thead>
+                    <tr>
+                        <th><span class="eng-only">Train</span><span class="sin-only">දුම්රිය</span></th>
+                        <th><span class="eng-only">Depart (Ambewela)</span><span class="sin-only">පිටත්වීම (අම්බේවෙල)</span></th>
+                        <th><span class="eng-only">Arrive (Badulla)</span><span class="sin-only">පැමිණීම (බදුල්ල)</span></th>
+                        <th><span class="eng-only">Duration</span><span class="sin-only">ගමන් කාලය</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>🚂 Udarata Menike</td><td>09:30 AM</td><td>12:17 PM</td><td><span class="journey-time">2h 47m</span></td></tr>
+                    <tr><td>🍃 Ella Odyssey</td><td>01:30 PM</td><td>04:15 PM</td><td><span class="journey-time">2h 45m</span></td></tr>
+                    <tr><td>🌄 Podi Menike</td><td>03:00 PM</td><td>05:45 PM</td><td><span class="journey-time">2h 45m</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="footer-note">
+            💡 <span class="eng-only"><strong>Tourist tip:</strong> Book 1st class AC in advance via Sri Lanka Railways mobile app or at major stations. Window seats offer breathtaking views of tea country.</span>
+            <span class="sin-only"><strong>සංචාරක උපදෙස්:</strong> 1 වන පන්ති වායුසමනය සහිත කුටි කලින් වෙන්කරවා ගන්න. ජනේල අසුනින් තේ වතු සුන්දර දර්ශනයක් ලැබේ.</span>
+        </div>
+    </div>
+
+    <div class="alert">
+        <span>📢</span>
+        <div>
+            <strong class="eng-only">🔔 Real-time updates:</strong> For last-minute changes, check Sri Lanka Railways Department (station notice boards) or ask at Badulla station. Trains are usually punctual on this scenic route.
+            <strong class="sin-only">🔔 සත්‍ය කාලීන තොරතුරු:</strong> අවසන් මොහොතේ වෙනස්කම් සඳහා බදුල්ල දුම්රිය ස්ථානයෙන් විමසන්න. මෙම මාර්ගයේ දුම්රිය සාමාන්‍යයෙන් නියමිත වේලාවට ධාවනය වේ.
+        </div>
+    </div>
+</div>
+
+<script>
+    const btnEng = document.getElementById('btn-eng');
+    const btnSin = document.getElementById('btn-sin');
+    const body = document.body;
+
+    btnEng.addEventListener('click', () => {
+        body.classList.remove('sin-lang');
+        btnEng.classList.add('active');
+        btnSin.classList.remove('active');
+    });
+
+    btnSin.addEventListener('click', () => {
+        body.classList.add('sin-lang');
+        btnSin.classList.add('active');
+        btnEng.classList.remove('active');
+    });
+</script>
+</body>
+</html>
